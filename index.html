@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Word Ladder Dash</title>
+<style>
+  :root{
+    --bg:#0f1020; --panel:#1a1c33; --ink:#eef0ff; --muted:#8b8fb5;
+    --accent:#5eead4; --accent2:#a78bfa; --good:#34d399; --bad:#fb7185;
+    --slot:#272a47; --slot-line:#3a3e63;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;height:100%;}
+  body{
+    font-family:"Segoe UI",system-ui,Arial,sans-serif;
+    background:radial-gradient(1200px 800px at 70% -10%, #20234a 0%, var(--bg) 55%);
+    color:var(--ink); min-height:100%;
+    display:flex; align-items:center; justify-content:center; padding:24px;
+  }
+  .app{
+    width:100%; max-width:560px; background:rgba(26,28,51,.78);
+    border:1px solid #2c2f54; border-radius:20px; padding:26px 26px 30px;
+    box-shadow:0 30px 80px rgba(0,0,0,.45); backdrop-filter:blur(6px);
+  }
+  h1{
+    margin:0 0 2px; font-size:26px; letter-spacing:.5px;
+    background:linear-gradient(90deg,var(--accent),var(--accent2));
+    -webkit-background-clip:text; background-clip:text; color:transparent;
+  }
+  .sub{color:var(--muted); font-size:13px; margin-bottom:18px;}
+  .stats{display:flex; gap:10px; margin-bottom:16px;}
+  .stat{
+    flex:1; background:var(--panel); border:1px solid #2c2f54;
+    border-radius:12px; padding:10px 12px; text-align:center;
+  }
+  .stat .k{font-size:11px; color:var(--muted); text-transform:uppercase; letter-spacing:.6px;}
+  .stat .v{font-size:20px; font-weight:700; margin-top:2px;}
+  .v.warn{color:var(--bad);}
+  .ladder{
+    display:flex; flex-direction:column; gap:8px; margin:6px 0 14px;
+    max-height:42vh; overflow-y:auto; padding-right:4px;
+  }
+  .row{display:flex; gap:8px; justify-content:center;}
+  .tile{
+    width:48px; height:48px; border-radius:10px; display:flex;
+    align-items:center; justify-content:center; font-size:22px; font-weight:800;
+    text-transform:uppercase; background:var(--slot); border:1px solid var(--slot-line);
+  }
+  .row.target .tile{background:linear-gradient(180deg,#2b3b52,#22304a); border-color:#3d5a78; color:var(--accent);}
+  .row.start .tile{background:linear-gradient(180deg,#2f2b52,#272247); border-color:#5a4d8a; color:var(--accent2);}
+  .row.step .tile{background:#1f2a24; border-color:#2f5a45; color:var(--good);}
+  .row .label{align-self:center; font-size:11px; color:var(--muted); width:46px; text-align:right;}
+  .row .changed{outline:2px solid var(--accent); outline-offset:1px;}
+  form{display:flex; gap:8px; margin-top:4px;}
+  input[type=text]{
+    flex:1; font-size:20px; letter-spacing:6px; text-transform:uppercase;
+    text-align:center; padding:12px; border-radius:12px; border:1px solid #3a3e63;
+    background:#12142a; color:var(--ink); outline:none;
+  }
+  input:focus{border-color:var(--accent);}
+  button{
+    cursor:pointer; border:none; border-radius:12px; font-weight:700; font-size:15px;
+    padding:0 18px; color:#0f1020; background:linear-gradient(90deg,var(--accent),var(--accent2));
+    transition:transform .08s ease, filter .15s;
+  }
+  button:hover{filter:brightness(1.08);} button:active{transform:translateY(1px);}
+  button.ghost{background:transparent; color:var(--muted); border:1px solid #3a3e63;}
+  .controls{display:flex; gap:8px; margin-top:12px;}
+  .controls button{flex:1; padding:11px 0;}
+  .msg{min-height:20px; margin-top:10px; font-size:14px; text-align:center; color:var(--muted);}
+  .msg.good{color:var(--good);} .msg.bad{color:var(--bad);}
+  .win{
+    text-align:center; padding:14px; margin-top:12px; border-radius:14px;
+    background:linear-gradient(180deg,#172a3a,#13233a); border:1px solid #2f5a78;
+  }
+  .win h2{margin:0 0 4px; color:var(--accent);}
+  .hint{font-size:12px; color:var(--muted); text-align:center; margin-top:14px; line-height:1.5;}
+  kbd{background:#23264a; border:1px solid #3a3e63; border-radius:5px; padding:1px 6px; font-size:11px;}
+</style>
+</head>
+<body>
+<div class="app">
+  <h1>Word Ladder Dash</h1>
+  <div class="sub">Change <b>one letter at a time</b> — every rung must be a real word. Reach the target before the clock runs out.</div>
+
+  <div class="stats">
+    <div class="stat"><div class="k">Time</div><div class="v" id="time">60</div></div>
+    <div class="stat"><div class="k">Score</div><div class="v" id="score">0</div></div>
+    <div class="stat"><div class="k">Steps</div><div class="v" id="steps">0</div></div>
+    <div class="stat"><div class="k">Par</div><div class="v" id="par">–</div></div>
+  </div>
+
+  <div class="ladder" id="ladder"></div>
+
+  <form id="form" autocomplete="off">
+    <input id="guess" type="text" maxlength="4" placeholder="next word" />
+    <button type="submit">Climb</button>
+  </form>
+  <div class="msg" id="msg">Type a word that differs by exactly one letter.</div>
+
+  <div class="controls">
+    <button class="ghost" id="hintBtn" type="button">Hint (−5)</button>
+    <button class="ghost" id="undoBtn" type="button">Undo</button>
+    <button class="ghost" id="newBtn" type="button">New puzzle</button>
+  </div>
+
+  <div class="hint">
+    <kbd>Enter</kbd> to climb · <kbd>Esc</kbd> clears the box · Solve under par for a speed bonus.
+  </div>
+</div>
+
+<script>
+/* ---------- Dictionary (common 4-letter words) ---------- */
+const WORD_LIST = `able acid aged also area army away baby back bald ball band bank bare
+barn base bath bead beam bean bear beat beds beef been beer bell belt bend bent best
+bike bill bind bird bite blue boat body boil bold bolt bone book boom boot bore born
+boss both bowl buds bulk bull bump burn bury bush busy buys cafe cage cake call calm
+came camp cane cans cape card care cars cart case cash cast cats cave cell cent chap
+chat chef chew chip chop city clam clap claw clay clip club clue coal coat code coil
+coin cold cole colt comb come cook cool cope copy cord core cork corn cost cosy cote
+coup cove cows crab crew crib crop crow cube cubs cult cure curl curt cute dale dame
+damp dare dark dart dash data date dawn days dead deaf deal dean dear debt deck deed
+deep deer dent desk dial dice died diet digs dime dine ding dire dirt dish dive dock
+does dogs doll dome done dorm door dose dote dots dove down drag draw drew drip drop
+drug drum dual duck dude duel dues duke dull duly dump dune dunk dusk dust duty each
+earl earn ears ease east easy eats edge eggs envy epic euro even ever evil exam exit
+eyes face fact fade fail fair fake fall fame fang fare farm fast fate fawn fear feat
+feed feel fees feet fell felt fern fest figs file fill film find fine fire firm fish
+fist fits five flag flap flat flaw flea fled flee flew flex flip flop flow flue foal
+foam foes fold folk fond font food fool foot ford fore fork form fort foul four fowl
+free fret frog from fuel full fume fund fury fuse fuss gage gain gait gala gale game
+gang gaps gate gave gaze gear gems gene gift gild gill girl give glad glee glen glow
+glue goal goat goes gold golf gone gong good gore gory gosh gown grab gram gray grew
+grey grid grim grin grip grow grub gulf gull gully gulp gums guns guru gush gust guts
+guys hail hair half hall halt hams hand hang hard hare hark harm harp hash hate haul
+have hawk haze head heal heap hear heat heed heel heir held hell helm help hemp hens
+herb herd here hero hers hide high hike hill hilt hind hint hire hiss hits hive hoax
+hold hole holy home hone hood hoof hook hoop hoot hope horn hose host hour howl huge
+hulk hull hump hung hunk hunt hurl hurt hush huts hymn ibex ices icon idea idle idly
+inch into iron isle item jabs jack jade jail jamb jars jaws jays jazz jeep jerk jest
+jets jibe jigs jinx jive jobs jogs join joke jolt jots joys judo jugs juke July jump
+June junk jury just jute keel keen keep kelp kept keys kick kids kiln kilt kind king
+kiss kite kits kiwi knee knew knit knob knot know labs lace lack lacy lads lady laid
+lair lake lamb lame lamp land lane laps lard lark lash lass last late lava lawn laws
+lays lazy lead leaf leak lean leap left legs lend lens lent less lest lets levy liar
+lice lick lids lied lien lies life lift like limb lime limp line link lint lion lips
+lisp list live load loaf loan lobe lock loft logo logs lone long look loom loop loose
+loot lord lore lose loss lost lots loud love lows luck luge lugs lull lump lung lure
+lurk lush lust lute mace made maid mail main make male mall malt mama mane many maps
+mare mark mars mart mash mask mass mast mate math maze mead meal mean meat meek meet
+melt memo mend menu meow mere mesh mess mice mild mile milk mill mime mind mine mini
+mint miss mist mite mitt moan moat mock mode mole monk mood moon moor moot more moss
+most moth move much muck muds mugs mule mums murk muse mush must mute myth nags nail
+name nape navy near neat neck need neon nest nets news newt next nibs nice nick nine
+nips node nods none nook noon norm nose nosy note noun nova nude nuke null numb nuns
+nuts oaks oars oath obey odds odor ogre oils oily okay olds omen omit once ones only
+onto onyx ooze oozy opal open oral orbs ours oust outs oval oven over owed owes owls
+owns pace pack pact pads page paid pail pain pair pale palm pane pang pans pant papa
+pard pare park part pass past pate path pats pave pawn paws pays peak peal pear peas
+peat peck peek peel peep peer pegs pelt pens pent peon perk pert peso pest pets pick
+pier pies pigs pike pile pill pine ping pink pins pint pipe pita pits pity plan play
+plea plod plop plot plow ploy plug plum plus pock pods poem poet poke pole poll pomp
+pond pony pool poor pope pops pore pork port pose posh post posy pots pour pout pray
+prep prey prim prod prom prop pros prow pubs puck puff pull pulp puma pump punk puns
+punt pupa pups pure purr push puts putt pyre quad quay quid quip quit quiz race rack
+racy raft rage rags raid rail rain rake ramp rams rang rank rant raps rapt rare rash
+rasp rate rats rave raws rays raze read real ream reap rear redo reds reed reef reek
+reel rein rely rend rent rest ribs rice rich rick ride rids rife rift rigs rile rims
+ring rink riot ripe rips rise risk rite road roam roar robe robs rock rode rods roes
+roil role roll roof rook room root rope rose rosy rote rots rout rove rows rube rubs
+ruby rude rues ruff rugs ruin rule rump rune rung runs runt ruse rush rust ruts sack
+safe saga sage sago said sail sake sale salt same sand sane sang sank saps sari sash
+sass save sawn saws says scab scam scan scar scat seal seam sear seas seat sect seed
+seek seem seen seep seer self sell semi send sent sera serf sets sewn sews shad shag
+sham shed shim shin ship shoe shop shot show shun shut sick side sift sigh sign silk
+sill silo silt sing sink sips sire site sits size skew skid skim skin skip skis slab
+slam slap slat slaw slay sled slew slid slim slip slit slob sloe slog slop slot slow
+slug slum slur smog smug smut snag snap snip snit snob snot snow snub snug soak soap
+soar sobs sock soda sofa soft soil sold sole solo some song sons soon soot sore sort
+soul soup sour sown sows soya span spar spas spat sped spew spin spit spot spry spud
+spun spur stab stag star stay stem step stew stir stop stow stub stud stun stye subs
+such suck suds sued suer sues suit sulk sums sung sunk suns sure surf swab swag swam
+swan swap swat sway swig swim swum tabs tack taco tact tags tail take tale talk tall
+tame tamp tang tank tans tape taps tare tarn taro tarp tars tart task tate taut taxa
+taxi teak teal team tear teas teat tech teed teem teen tees tell temp tend tens tent
+term tern test text than that thaw thee them then they thin this thud thug thus tick
+tide tidy tied tier ties tiff tile till tilt time tine tins tint tiny tips tire toad
+toed toes tofu togs toil told toll tomb tome tone tong tons took tool toot tops tore
+torn tort toss tote tots tour tout town toys trap tray tree trek trim trio trip trod
+trot true tsar tuba tube tubs tuck tufa tuft tugs tuna tune turf turn tusk tutu twig
+twin twit type typo tyre ugly undo unit unto upon urge urns used user uses vain vale
+vamp vane vary vase vast veal veer veil vein vend vent verb very vest veto vials vibe
+vice vied vies view vile vine vino viol visa vise void volt vole vote vows wade waft
+wage wail wait wake wale walk wall wand wane want ward ware warm warn warp wars wart
+wary wash wasp wave wavy waxy ways weak weal wean wear webs weds weed week weep weld
+well welt went wept were west wets wham what when whet whey whim whip whir whiz whoa
+wick wide wife wigs wild wile will wilt wily wimp wind wine wing wink wins wipe wire
+wise wish wisp with wits wive woes woke wolf womb wood wool word wore work worm worn
+wort wove wows wrap wren writ yams yang yank yard yarn yawn yeah year yell yelp yips
+yoga yoke yolk yore your yowl yule zany zaps zeal zero zest zinc zing zips zone zoom`
+  .split(/\s+/).filter(w => w.length === 4);
+
+const DICT = new Set(WORD_LIST);
+
+/* ---------- Puzzles: each has start, target, and par (shortest path length we expect) ---------- */
+const PUZZLES = [
+  ["cold","warm",4], ["head","tail",6], ["lead","gold",4], ["fire","heat",5],
+  ["wood","tree",6], ["fish","bird",6], ["dark","lamp",6], ["love","hate",5],
+  ["poor","rich",6], ["east","west",5], ["milk","wine",6], ["rain","snow",6],
+  ["boat","ship",6], ["hard","soft",6], ["moon","star",6], ["king","pawn",7],
+  ["sand","rock",6], ["foot","hand",6]
+].filter(p => p[0].length === 4 && p[1].length === 4);
+
+/* ---------- BFS to verify a path exists & compute true par ---------- */
+function neighbors(word){
+  const out = [];
+  for(let i=0;i<4;i++){
+    for(let c=97;c<=122;c++){
+      const ch = String.fromCharCode(c);
+      if(ch === word[i]) continue;
+      const w = word.slice(0,i)+ch+word.slice(i+1);
+      if(DICT.has(w)) out.push(w);
+    }
+  }
+  return out;
+}
+function shortestLadder(a,b){
+  if(!DICT.has(a)||!DICT.has(b)) return null;
+  if(a===b) return [a];
+  const q=[[a]], seen=new Set([a]);
+  while(q.length){
+    const path=q.shift(), last=path[path.length-1];
+    for(const n of neighbors(last)){
+      if(seen.has(n)) continue;
+      const np=[...path,n];
+      if(n===b) return np;
+      seen.add(n); q.push(np);
+    }
+  }
+  return null;
+}
+
+/* ---------- Game state ---------- */
+let state;
+const $ = id => document.getElementById(id);
+
+function pickPuzzle(){
+  // pick a puzzle that actually has a valid ladder in our dictionary
+  const shuffled = [...PUZZLES].sort(()=>Math.random()-0.5);
+  for(const [s,t] of shuffled){
+    const path = shortestLadder(s,t);
+    if(path) return {start:s, target:t, par:path.length-1, solution:path};
+  }
+  // fallback
+  return {start:"cold", target:"warm", par:4, solution:["cold","cord","word","ward","warm"]};
+}
+
+function newGame(){
+  const p = pickPuzzle();
+  state = {
+    start:p.start, target:p.target, par:p.par, solution:p.solution,
+    chain:[p.start], time:60, score: state ? state.score : 0,
+    timer:null, over:false, hintsUsed:0
+  };
+  $('par').textContent = p.par;
+  $('guess').value = ''; $('guess').disabled = false;
+  $('msg').textContent = 'Type a word that differs by exactly one letter.';
+  $('msg').className = 'msg';
+  render();
+  clearInterval(state.timer);
+  state.timer = setInterval(tick, 1000);
+  $('guess').focus();
+}
+
+function tick(){
+  state.time--;
+  $('time').textContent = state.time;
+  $('time').classList.toggle('warn', state.time <= 10);
+  if(state.time <= 0) lose();
+}
+
+function diffCount(a,b){
+  let d=0; for(let i=0;i<4;i++) if(a[i]!==b[i]) d++; return d;
+}
+function changedIndex(a,b){
+  for(let i=0;i<4;i++) if(a[i]!==b[i]) return i; return -1;
+}
+
+function render(){
+  const L = $('ladder'); L.innerHTML='';
+  const rows = [];
+  state.chain.forEach((w,i)=>{
+    rows.push(makeRow(w, i===0 ? 'start':'step', i===0?'start': '#'+i,
+      i>0 ? changedIndex(state.chain[i-1], w) : -1));
+  });
+  rows.push(makeRow(state.target,'target','target', changedIndex(state.chain[state.chain.length-1], state.target)));
+  rows.forEach(r=>L.appendChild(r));
+  L.scrollTop = L.scrollHeight;
+  $('steps').textContent = state.chain.length-1;
+  $('score').textContent = state.score;
+}
+
+function makeRow(word,cls,label,hi){
+  const row=document.createElement('div'); row.className='row '+cls;
+  const lab=document.createElement('div'); lab.className='label'; lab.textContent=label;
+  row.appendChild(lab);
+  for(let i=0;i<4;i++){
+    const t=document.createElement('div'); t.className='tile'; t.textContent=word[i];
+    if(i===hi && (cls==='step'||cls==='target')) t.classList.add('changed');
+    row.appendChild(t);
+  }
+  return row;
+}
+
+function submitGuess(e){
+  if(e) e.preventDefault();
+  if(state.over) return;
+  let g = $('guess').value.trim().toLowerCase();
+  $('guess').value='';
+  if(g.length!==4){ flash('Words must be 4 letters.','bad'); return; }
+  const last = state.chain[state.chain.length-1];
+  if(diffCount(last,g)!==1){ flash('Change exactly one letter from "'+last.toUpperCase()+'".','bad'); return; }
+  if(!DICT.has(g)){ flash('"'+g.toUpperCase()+'" isn\'t in the word list.','bad'); return; }
+  if(state.chain.includes(g)){ flash('You already used that word.','bad'); return; }
+
+  state.chain.push(g);
+  if(g===state.target){ win(); return; }
+  flash('Nice — keep climbing!','good');
+  render();
+}
+
+function flash(text,kind){
+  $('msg').textContent = text;
+  $('msg').className = 'msg '+(kind||'');
+}
+
+function win(){
+  state.over = true;
+  clearInterval(state.timer);
+  const steps = state.chain.length-1;
+  const base = 100;
+  const timeBonus = state.time * 2;
+  const parBonus = steps <= state.par ? 50 : 0;
+  const hintPenalty = state.hintsUsed * 5;
+  const gained = Math.max(10, base + timeBonus + parBonus - hintPenalty);
+  state.score += gained;
+  render();
+  const L = $('ladder');
+  const w = document.createElement('div'); w.className='win';
+  w.innerHTML = `<h2>Solved!</h2>
+    <div>${steps} steps · ${state.time}s left · ${parBonus?'<b>Par bonus!</b> · ':''}
+    <b>+${gained}</b> points</div>`;
+  L.parentNode.insertBefore(w, L.nextSibling);
+  $('guess').disabled = true;
+  flash('Press “New puzzle” for the next ladder.','good');
+  setTimeout(()=>{ if(w.parentNode) w.parentNode.removeChild(w); }, 6000);
+}
+
+function lose(){
+  state.over = true;
+  clearInterval(state.timer);
+  $('guess').disabled = true;
+  flash('Time! The target was "'+state.target.toUpperCase()+'". Try a new puzzle.','bad');
+}
+
+function useHint(){
+  if(state.over) return;
+  const last = state.chain[state.chain.length-1];
+  // find the solution from current position to target via BFS, suggest next move
+  const path = shortestLadder(last, state.target);
+  if(!path || path.length<2){ flash('No hint available from here.','bad'); return; }
+  state.hintsUsed++;
+  state.score = Math.max(0, state.score - 5);
+  const next = path[1];
+  const idx = changedIndex(last, next);
+  flash(`Hint: change position ${idx+1} → "${next[idx].toUpperCase()}"`, '');
+  $('score').textContent = state.score;
+  $('guess').value = next; $('guess').focus();
+}
+
+function undo(){
+  if(state.over || state.chain.length<=1) return;
+  state.chain.pop();
+  render();
+  flash('Stepped back down.','');
+}
+
+/* ---------- Wire up ---------- */
+$('form').addEventListener('submit', submitGuess);
+$('hintBtn').addEventListener('click', useHint);
+$('undoBtn').addEventListener('click', undo);
+$('newBtn').addEventListener('click', newGame);
+$('guess').addEventListener('keydown', e=>{ if(e.key==='Escape') $('guess').value=''; });
+
+newGame();
+</script>
+</body>
+</html>
