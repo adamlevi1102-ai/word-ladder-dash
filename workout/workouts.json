@@ -1,0 +1,28 @@
+{
+  "gymName": "מכון כושר בבית המלון",
+  "gymAddress": "רודוס, יוון",
+  "days": [
+    {
+      "id": "sunday",
+      "label": "ראשון",
+      "type": "gym",
+      "status": "active",
+      "exercises": [
+        { "name": "Treadmill warm-up", "setsReps": "5-10 min", "intensity": "light", "hasWeightInput": false, "notes": "" },
+        { "name": "Leg press", "setsReps": "3x12", "intensity": "moderate", "hasWeightInput": true, "notes": "" },
+        { "name": "Lat pulldown", "setsReps": "3x10-12", "intensity": "moderate", "hasWeightInput": true, "notes": "לקראת עליית מתח ראשונה" },
+        { "name": "Negative pull-ups (bar)", "setsReps": "3-4 reps", "intensity": "heavy", "hasWeightInput": false, "notes": "" },
+        { "name": "Shoulder press machine", "setsReps": "3x10", "intensity": "moderate", "hasWeightInput": true, "notes": "" },
+        { "name": "Triceps extension machine", "setsReps": "3x12", "intensity": "moderate", "hasWeightInput": true, "notes": "" },
+        { "name": "Row (machine/dumbbell)", "setsReps": "3x12", "intensity": "moderate", "hasWeightInput": true, "notes": "" },
+        { "name": "Plank or leg raises", "setsReps": "3 rounds", "intensity": "light", "hasWeightInput": false, "notes": "" }
+      ]
+    },
+    { "id": "monday", "label": "שני", "type": "crossfit" },
+    { "id": "tuesday", "label": "שלישי", "type": "gym", "status": "tbd", "exercises": [] },
+    { "id": "wednesday", "label": "רביעי", "type": "crossfit" },
+    { "id": "thursday", "label": "חמישי", "type": "gym", "status": "tbd", "exercises": [] },
+    { "id": "friday", "label": "שישי", "type": "gym", "status": "tbd", "exercises": [] },
+    { "id": "saturday", "label": "שבת", "type": "gym", "status": "tbd", "exercises": [] }
+  ]
+}
