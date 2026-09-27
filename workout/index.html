@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>מעקב אימונים</title>
+<style>
+  :root {
+    --bg: #f6f7f9; --card: #fff; --ink: #1d2230; --muted: #6b7280; --line: #e5e7eb;
+    --accent: #2563eb;
+    --light-bg: #dcfce7; --light-ink: #166534;
+    --moderate-bg: #fef9c3; --moderate-ink: #854d0e;
+    --heavy-bg: #fee2e2; --heavy-ink: #991b1b;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; padding: 16px; background: var(--bg); color: var(--ink);
+    font-family: system-ui, -apple-system, "Segoe UI", Arial, sans-serif; font-size: 15px;
+  }
+  main { max-width: 720px; margin: 0 auto; }
+  .info { background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 12px 14px; margin-bottom: 12px; }
+  .info h1 { margin: 0 0 4px; font-size: 1.2rem; }
+  .info p { margin: 0; color: var(--muted); }
+  .tabs { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; margin-bottom: 12px; }
+  .tabs button {
+    padding: 8px 0; font-size: 0.85rem; border: 1px solid var(--line); border-radius: 8px;
+    background: var(--card); color: var(--ink); font: inherit; cursor: pointer;
+  }
+  .tabs button.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+  .date { color: var(--muted); margin: 0 0 8px; font-size: 0.9rem; }
+  .message { background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 20px; text-align: center; color: var(--muted); }
+  .table-wrap { overflow-x: auto; background: var(--card); border: 1px solid var(--line); border-radius: 10px; }
+  table { width: 100%; border-collapse: collapse; }
+  th, td { padding: 8px 4px; border-bottom: 1px solid var(--line); text-align: right; vertical-align: middle; }
+  th { font-size: 0.75rem; color: var(--muted); font-weight: 600; white-space: nowrap; }
+  tr:last-child td { border-bottom: none; }
+  td.name { direction: ltr; text-align: left; overflow-wrap: anywhere; }
+  td.name small { display: block; direction: rtl; text-align: right; color: var(--muted); margin-top: 2px; }
+  td.sets { direction: ltr; text-align: center; font-size: 0.85rem; }
+  tr.done td.name { text-decoration: line-through; color: var(--muted); }
+  .badge { display: inline-block; padding: 2px 6px; border-radius: 999px; font-size: 0.8rem; white-space: nowrap; }
+  .light { background: var(--light-bg); color: var(--light-ink); }
+  .moderate { background: var(--moderate-bg); color: var(--moderate-ink); }
+  .heavy { background: var(--heavy-bg); color: var(--heavy-ink); }
+  input[type="number"] { width: 54px; padding: 6px; border: 1px solid var(--line); border-radius: 6px; font: inherit; direction: ltr; }
+  input[type="checkbox"] { width: 22px; height: 22px; }
+  td.center { text-align: center; }
+</style>
+</head>
+<body>
+<main>
+  <section class="info" id="info"></section>
+  <nav class="tabs" id="tabs"></nav>
+  <p class="date" id="date"></p>
+  <section id="content"></section>
+</main>
+<script>
+  const INTENSITY_LABELS = { light: 'קל', moderate: 'בינוני', heavy: 'כבד' };
+  let data = null;
+  let selected = new Date().getDay();
+
+  // Local YYYY-MM-DD (toISOString would shift the date near midnight).
+  function formatDate(d) {
+    const pad = n => String(n).padStart(2, '0');
+    return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+  }
+
+  // Date of the given weekday (0 = Sunday) in the current Sunday–Saturday week.
+  function dateForWeekday(dayIndex) {
+    const d = new Date();
+    d.setDate(d.getDate() - d.getDay() + dayIndex);
+    return formatDate(d);
+  }
+
+  function load(dateKey) {
+    try { return JSON.parse(localStorage.getItem('workout:' + dateKey)) || {}; }
+    catch { return {}; }
+  }
+
+  function save(dateKey, entries) {
+    try { localStorage.setItem('workout:' + dateKey, JSON.stringify(entries)); } catch {}
+  }
+
+  function el(tag, attrs = {}, text) {
+    const node = document.createElement(tag);
+    Object.assign(node, attrs);
+    if (text !== undefined) node.textContent = text;
+    return node;
+  }
+
+  function renderInfo() {
+    const info = document.getElementById('info');
+    info.replaceChildren(el('h1', {}, data.gymName), el('p', {}, data.gymAddress));
+  }
+
+  function renderTabs() {
+    const tabs = document.getElementById('tabs');
+    tabs.replaceChildren(...data.days.map((day, i) => {
+      const btn = el('button', { type: 'button', className: i === selected ? 'active' : '' }, day.label);
+      btn.addEventListener('click', () => { selected = i; renderTabs(); renderDay(); });
+      return btn;
+    }));
+  }
+
+  function renderDay() {
+    const day = data.days[selected];
+    const dateKey = dateForWeekday(selected);
+    const content = document.getElementById('content');
+    document.getElementById('date').textContent = `יום ${day.label} · ${dateKey}`;
+
+    if (day.type === 'crossfit') {
+      content.replaceChildren(el('div', { className: 'message' }, 'מתוכנת ע"י המאמן — אין צורך למלא'));
+      return;
+    }
+    if (day.status !== 'active') {
+      content.replaceChildren(el('div', { className: 'message' }, 'ממתין לרשימת ציוד מהמכון'));
+      return;
+    }
+
+    const entries = load(dateKey);
+    const table = el('table');
+    const head = el('tr');
+    ['תרגיל', 'סטים x חזרות', 'עצימות', 'משקל', 'בוצע'].forEach(h => head.appendChild(el('th', {}, h)));
+    table.appendChild(el('thead')).appendChild(head);
+    const body = table.appendChild(el('tbody'));
+
+    day.exercises.forEach(ex => {
+      const entry = entries[ex.name] || {};
+      const row = el('tr', { className: entry.done ? 'done' : '' });
+
+      const nameCell = el('td', { className: 'name' }, ex.name);
+      if (ex.notes) nameCell.appendChild(el('small', {}, ex.notes));
+      row.appendChild(nameCell);
+
+      row.appendChild(el('td', { className: 'sets' }, ex.setsReps));
+
+      const intensityCell = el('td');
+      intensityCell.appendChild(el('span', { className: 'badge ' + ex.intensity }, INTENSITY_LABELS[ex.intensity] || ex.intensity));
+      row.appendChild(intensityCell);
+
+      const weightCell = el('td', { className: 'center' });
+      if (ex.hasWeightInput) {
+        const input = el('input', { type: 'number', inputMode: 'decimal', min: 0, step: 0.5, placeholder: 'ק"ג', value: entry.weight ?? '' });
+        input.addEventListener('input', () => {
+          const current = load(dateKey);
+          current[ex.name] = { ...current[ex.name], weight: input.value };
+          save(dateKey, current);
+        });
+        weightCell.appendChild(input);
+      }
+      row.appendChild(weightCell);
+
+      const doneCell = el('td', { className: 'center' });
+      const checkbox = el('input', { type: 'checkbox', checked: !!entry.done });
+      checkbox.addEventListener('change', () => {
+        const current = load(dateKey);
+        current[ex.name] = { ...current[ex.name], done: checkbox.checked };
+        save(dateKey, current);
+        row.classList.toggle('done', checkbox.checked);
+      });
+      doneCell.appendChild(checkbox);
+      row.appendChild(doneCell);
+
+      body.appendChild(row);
+    });
+
+    const wrap = el('div', { className: 'table-wrap' });
+    wrap.appendChild(table);
+    content.replaceChildren(wrap);
+  }
+
+  fetch('workouts.json')
+    .then(res => { if (!res.ok) throw new Error(res.status); return res.json(); })
+    .then(json => { data = json; renderInfo(); renderTabs(); renderDay(); })
+    .catch(() => {
+      document.getElementById('content').replaceChildren(
+        el('div', { className: 'message' }, 'לא ניתן לטעון את workouts.json — יש לפתוח את הדף דרך שרת (לא כקובץ מקומי).')
+      );
+    });
+</script>
+</body>
+</html>
