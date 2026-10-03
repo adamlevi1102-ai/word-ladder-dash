@@ -35,7 +35,9 @@
   th { font-size: 0.75rem; color: var(--muted); font-weight: 600; white-space: nowrap; }
   tr:last-child td { border-bottom: none; }
   td.name { direction: ltr; text-align: left; overflow-wrap: anywhere; }
-  td.name small { display: block; direction: rtl; text-align: right; color: var(--muted); margin-top: 2px; }
+  tr.has-note td { border-bottom: none; padding-bottom: 2px; }
+  tr.note-row td { padding-top: 0; color: var(--muted); font-size: 0.8rem; }
+  tr.note-row bdi { white-space: nowrap; }
   td.sets { direction: ltr; text-align: center; font-size: 0.85rem; }
   tr.done td.name { text-decoration: line-through; color: var(--muted); }
   .badge { display: inline-block; padding: 2px 6px; border-radius: 999px; font-size: 0.8rem; white-space: nowrap; }
@@ -88,6 +90,15 @@
     return node;
   }
 
+  // Isolate number runs like "18 × 10 × 3" so the RTL layout doesn't reverse their order.
+  function renderNote(text) {
+    const small = el('small');
+    text.split(/(\d[\d.,×x+/ ()-]*\d)/).forEach((part, i) => {
+      small.appendChild(i % 2 ? el('bdi', { dir: 'ltr' }, part) : document.createTextNode(part));
+    });
+    return small;
+  }
+
   function renderInfo() {
     const info = document.getElementById('info');
     info.replaceChildren(el('h1', {}, data.gymName), el('p', {}, data.gymAddress));
@@ -112,6 +123,10 @@
       content.replaceChildren(el('div', { className: 'message' }, 'מתוכנת ע"י המאמן — אין צורך למלא'));
       return;
     }
+    if (day.type === 'rest') {
+      content.replaceChildren(el('div', { className: 'message' }, 'יום מנוחה'));
+      return;
+    }
     if (day.status !== 'active') {
       content.replaceChildren(el('div', { className: 'message' }, 'ממתין לרשימת ציוד מהמכון'));
       return;
@@ -129,7 +144,6 @@
       const row = el('tr', { className: entry.done ? 'done' : '' });
 
       const nameCell = el('td', { className: 'name' }, ex.name);
-      if (ex.notes) nameCell.appendChild(el('small', {}, ex.notes));
       row.appendChild(nameCell);
 
       row.appendChild(el('td', { className: 'sets' }, ex.setsReps));
@@ -162,6 +176,12 @@
       row.appendChild(doneCell);
 
       body.appendChild(row);
+      if (ex.notes) {
+        row.classList.add('has-note');
+        const noteCell = el('td', { colSpan: 5 });
+        noteCell.appendChild(renderNote(ex.notes));
+        body.appendChild(el('tr', { className: 'note-row' })).appendChild(noteCell);
+      }
     });
 
     const wrap = el('div', { className: 'table-wrap' });
