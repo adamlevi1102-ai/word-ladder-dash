@@ -1,28 +1,159 @@
 {
-  "gymName": "מכון כושר בבית המלון",
-  "gymAddress": "רודוס, יוון",
+  "gymName": "פרופיט רעננה",
+  "gymAddress": "הפנינה 2, רעננה",
   "days": [
     {
       "id": "sunday",
       "label": "ראשון",
+      "type": "crossfit"
+    },
+    {
+      "id": "monday",
+      "label": "שני",
+      "type": "rest"
+    },
+    {
+      "id": "tuesday",
+      "label": "שלישי",
       "type": "gym",
       "status": "active",
       "exercises": [
-        { "name": "Treadmill warm-up", "setsReps": "5-10 min", "intensity": "light", "hasWeightInput": false, "notes": "" },
-        { "name": "Leg press", "setsReps": "3x12", "intensity": "moderate", "hasWeightInput": true, "notes": "" },
-        { "name": "Lat pulldown", "setsReps": "3x10-12", "intensity": "moderate", "hasWeightInput": true, "notes": "לקראת עליית מתח ראשונה" },
-        { "name": "Negative pull-ups (bar)", "setsReps": "3-4 reps", "intensity": "heavy", "hasWeightInput": false, "notes": "" },
-        { "name": "Shoulder press machine", "setsReps": "3x10", "intensity": "moderate", "hasWeightInput": true, "notes": "" },
-        { "name": "Triceps extension machine", "setsReps": "3x12", "intensity": "moderate", "hasWeightInput": true, "notes": "" },
-        { "name": "Row (machine/dumbbell)", "setsReps": "3x12", "intensity": "moderate", "hasWeightInput": true, "notes": "" },
-        { "name": "Plank or leg raises", "setsReps": "3 rounds", "intensity": "light", "hasWeightInput": false, "notes": "" }
+        {
+          "name": "Assisted pull-up machine",
+          "setsReps": "4x6-8",
+          "intensity": "heavy",
+          "hasWeightInput": true,
+          "notes": "03.10: 50 ק\"ג נגדי × 7 × 4 · הבא: 50, ב-8 חזרות בכל הסטים לרדת ל-45 (יותר משקל = קל יותר)"
+        },
+        {
+          "name": "Shoulder press machine",
+          "setsReps": "3x10",
+          "intensity": "moderate",
+          "hasWeightInput": true,
+          "notes": "03.10: 18 × 10 × 3 · הבא: 20 ק\"ג"
+        },
+        {
+          "name": "Pec deck (chest fly)",
+          "setsReps": "3x12",
+          "intensity": "moderate",
+          "hasWeightInput": true,
+          "notes": "גב לכרית · 03.10: 14 × 12 × 3 · הבא: 16 ק\"ג"
+        },
+        {
+          "name": "Reverse pec deck",
+          "setsReps": "3x12-15",
+          "intensity": "light",
+          "hasWeightInput": true,
+          "notes": "חזה לכרית · 03.10: 9 × 10 × 3 · הבא: 9 עד 12+ חזרות"
+        },
+        {
+          "name": "Seated cable row",
+          "setsReps": "3x10-12",
+          "intensity": "moderate",
+          "hasWeightInput": true,
+          "notes": "03.10: 30×10, 25×12, 25×12 · הבא: 27.5 × 3 (או 30/30/25)"
+        },
+        {
+          "name": "Triceps press machine",
+          "setsReps": "3x10-12",
+          "intensity": "moderate",
+          "hasWeightInput": true,
+          "notes": "03.10: 23×12, 27×10, 27×10 · הבא: 27 × 3 עד 12, ואז 30"
+        },
+        {
+          "name": "Low cable curl",
+          "setsReps": "3x12",
+          "intensity": "moderate",
+          "hasWeightInput": true,
+          "notes": "03.10: 10 × 12 × 3 + 12.5 × 10 · הבא: 12.5 × 3"
+        },
+        {
+          "name": "Hammer curls",
+          "setsReps": "3x10-12",
+          "intensity": "moderate",
+          "hasWeightInput": true,
+          "notes": "03.10: 5 × 12 × 3 · הבא: 6-7 ק\"ג"
+        }
       ]
     },
-    { "id": "monday", "label": "שני", "type": "crossfit" },
-    { "id": "tuesday", "label": "שלישי", "type": "gym", "status": "tbd", "exercises": [] },
-    { "id": "wednesday", "label": "רביעי", "type": "crossfit" },
-    { "id": "thursday", "label": "חמישי", "type": "gym", "status": "tbd", "exercises": [] },
-    { "id": "friday", "label": "שישי", "type": "gym", "status": "tbd", "exercises": [] },
-    { "id": "saturday", "label": "שבת", "type": "gym", "status": "tbd", "exercises": [] }
+    {
+      "id": "wednesday",
+      "label": "רביעי",
+      "type": "rest"
+    },
+    {
+      "id": "thursday",
+      "label": "חמישי",
+      "type": "crossfit"
+    },
+    {
+      "id": "friday",
+      "label": "שישי",
+      "type": "rest"
+    },
+    {
+      "id": "saturday",
+      "label": "שבת",
+      "type": "gym",
+      "status": "active",
+      "exercises": [
+        {
+          "name": "Assisted pull-up machine",
+          "setsReps": "4x6-8",
+          "intensity": "heavy",
+          "hasWeightInput": true,
+          "notes": "03.10: 50 ק\"ג נגדי × 7 × 4 · הבא: 50, ב-8 חזרות בכל הסטים לרדת ל-45 (יותר משקל = קל יותר)"
+        },
+        {
+          "name": "Shoulder press machine",
+          "setsReps": "3x10",
+          "intensity": "moderate",
+          "hasWeightInput": true,
+          "notes": "03.10: 18 × 10 × 3 · הבא: 20 ק\"ג"
+        },
+        {
+          "name": "Pec deck (chest fly)",
+          "setsReps": "3x12",
+          "intensity": "moderate",
+          "hasWeightInput": true,
+          "notes": "גב לכרית · 03.10: 14 × 12 × 3 · הבא: 16 ק\"ג"
+        },
+        {
+          "name": "Reverse pec deck",
+          "setsReps": "3x12-15",
+          "intensity": "light",
+          "hasWeightInput": true,
+          "notes": "חזה לכרית · 03.10: 9 × 10 × 3 · הבא: 9 עד 12+ חזרות"
+        },
+        {
+          "name": "Seated cable row",
+          "setsReps": "3x10-12",
+          "intensity": "moderate",
+          "hasWeightInput": true,
+          "notes": "03.10: 30×10, 25×12, 25×12 · הבא: 27.5 × 3 (או 30/30/25)"
+        },
+        {
+          "name": "Triceps press machine",
+          "setsReps": "3x10-12",
+          "intensity": "moderate",
+          "hasWeightInput": true,
+          "notes": "03.10: 23×12, 27×10, 27×10 · הבא: 27 × 3 עד 12, ואז 30"
+        },
+        {
+          "name": "Low cable curl",
+          "setsReps": "3x12",
+          "intensity": "moderate",
+          "hasWeightInput": true,
+          "notes": "03.10: 10 × 12 × 3 + 12.5 × 10 · הבא: 12.5 × 3"
+        },
+        {
+          "name": "Hammer curls",
+          "setsReps": "3x10-12",
+          "intensity": "moderate",
+          "hasWeightInput": true,
+          "notes": "03.10: 5 × 12 × 3 · הבא: 6-7 ק\"ג"
+        }
+      ]
+    }
   ]
 }
