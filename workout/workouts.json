@@ -23,21 +23,28 @@
           "setsReps": "4x6-8",
           "intensity": "heavy",
           "hasWeightInput": true,
-          "notes": "03.10: 50 ק\"ג נגדי × 7 × 4 · הבא: 50, ב-8 חזרות בכל הסטים לרדת ל-45 (יותר משקל = קל יותר)"
+          "notes": "10.10: 50 × 6 × 4 (אחרי גומייה בבוקר) · הבא: 50, לכוון ל-7-8 · משקל נגדי: יותר = קל יותר · מתח בבית רק בימים בלי חדר כושר"
+        },
+        {
+          "name": "Chest press machine",
+          "setsReps": "3x6-8",
+          "intensity": "heavy",
+          "hasWeightInput": true,
+          "notes": "+ סט חימום · חדש · הסט הראשון לחימום ולמציאת משקל"
         },
         {
           "name": "Shoulder press machine",
-          "setsReps": "3x10",
-          "intensity": "moderate",
+          "setsReps": "3x6-8",
+          "intensity": "heavy",
           "hasWeightInput": true,
-          "notes": "03.10: 18 × 10 × 3 · הבא: 20 ק\"ג"
+          "notes": "10.10: 23×8, 23×8, 25.5×6 · הבא: 25.5 × 3, ב-8 לעלות"
         },
         {
           "name": "Pec deck (chest fly)",
           "setsReps": "3x12",
           "intensity": "moderate",
           "hasWeightInput": true,
-          "notes": "גב לכרית · 03.10: 14 × 12 × 3 · הבא: 16 ק\"ג"
+          "notes": "גב לכרית · 03.10: 14 × 12 × 3 · הבא: 16"
         },
         {
           "name": "Reverse pec deck",
@@ -48,31 +55,38 @@
         },
         {
           "name": "Seated cable row",
-          "setsReps": "3x10-12",
+          "setsReps": "3x8-10",
           "intensity": "moderate",
           "hasWeightInput": true,
-          "notes": "03.10: 30×10, 25×12, 25×12 · הבא: 27.5 × 3 (או 30/30/25)"
+          "notes": "10.10: 27×10, 32×8, 32×8 · הבא: 32 × 3, ב-10 לעלות"
         },
         {
           "name": "Triceps press machine",
           "setsReps": "3x10-12",
           "intensity": "moderate",
           "hasWeightInput": true,
-          "notes": "03.10: 23×12, 27×10, 27×10 · הבא: 27 × 3 עד 12, ואז 30"
-        },
-        {
-          "name": "Low cable curl",
-          "setsReps": "3x12",
-          "intensity": "moderate",
-          "hasWeightInput": true,
-          "notes": "03.10: 10 × 12 × 3 + 12.5 × 10 · הבא: 12.5 × 3"
+          "notes": "10.10: 27×12, 32×10, 32×10 · הבא: 32 × 3, ב-12 לעלות"
         },
         {
           "name": "Hammer curls",
           "setsReps": "3x10-12",
           "intensity": "moderate",
           "hasWeightInput": true,
-          "notes": "03.10: 5 × 12 × 3 · הבא: 6-7 ק\"ג"
+          "notes": "10.10: 6 × 10 × 3 · הבא: 6, לכוון ל-12"
+        },
+        {
+          "name": "Wrist curl",
+          "setsReps": "3x12-15",
+          "intensity": "light",
+          "hasWeightInput": true,
+          "notes": "10.10: 5 עד כשל · לספור חזרות! מעל 20 לעלות ל-7"
+        },
+        {
+          "name": "Reverse wrist curl",
+          "setsReps": "3x12-15",
+          "intensity": "light",
+          "hasWeightInput": true,
+          "notes": "כף היד למטה · 10.10: 5 עד כשל · לספור חזרות"
         }
       ]
     },
@@ -102,56 +116,77 @@
           "setsReps": "4x6-8",
           "intensity": "heavy",
           "hasWeightInput": true,
-          "notes": "03.10: 50 ק\"ג נגדי × 7 × 4 · הבא: 50, ב-8 חזרות בכל הסטים לרדת ל-45 (יותר משקל = קל יותר)"
+          "notes": "10.10: 50 × 6 × 4 (אחרי גומייה בבוקר) · הבא: 50, לכוון ל-7-8 · משקל נגדי: יותר = קל יותר · מתח בבית רק בימים בלי חדר כושר"
+        },
+        {
+          "name": "Lat pulldown (V-grip)",
+          "setsReps": "3x10-12",
+          "intensity": "moderate",
+          "hasWeightInput": true,
+          "notes": "10.10: 25×12, 30×10, 35×6 · הבא: 30 × 3, ב-12 לעלות ל-35"
+        },
+        {
+          "name": "Incline chest press",
+          "setsReps": "3x6-8",
+          "intensity": "heavy",
+          "hasWeightInput": true,
+          "notes": "+ סט חימום · 10.10: 18×8, 23×6, 27×6 · הבא: 27 × 3, לכוון ל-8"
         },
         {
           "name": "Shoulder press machine",
-          "setsReps": "3x10",
-          "intensity": "moderate",
+          "setsReps": "3x6-8",
+          "intensity": "heavy",
           "hasWeightInput": true,
-          "notes": "03.10: 18 × 10 × 3 · הבא: 20 ק\"ג"
-        },
-        {
-          "name": "Pec deck (chest fly)",
-          "setsReps": "3x12",
-          "intensity": "moderate",
-          "hasWeightInput": true,
-          "notes": "גב לכרית · 03.10: 14 × 12 × 3 · הבא: 16 ק\"ג"
-        },
-        {
-          "name": "Reverse pec deck",
-          "setsReps": "3x12-15",
-          "intensity": "light",
-          "hasWeightInput": true,
-          "notes": "חזה לכרית · 03.10: 9 × 10 × 3 · הבא: 9 עד 12+ חזרות"
+          "notes": "10.10: 23×8, 23×8, 25.5×6 · הבא: 25.5 × 3, ב-8 לעלות"
         },
         {
           "name": "Seated cable row",
+          "setsReps": "3x8-10",
+          "intensity": "moderate",
+          "hasWeightInput": true,
+          "notes": "10.10: 27×10, 32×8, 32×8 · הבא: 32 × 3, ב-10 לעלות"
+        },
+        {
+          "name": "Biceps curl machine",
           "setsReps": "3x10-12",
           "intensity": "moderate",
           "hasWeightInput": true,
-          "notes": "03.10: 30×10, 25×12, 25×12 · הבא: 27.5 × 3 (או 30/30/25)"
-        },
-        {
-          "name": "Triceps press machine",
-          "setsReps": "3x10-12",
-          "intensity": "moderate",
-          "hasWeightInput": true,
-          "notes": "03.10: 23×12, 27×10, 27×10 · הבא: 27 × 3 עד 12, ואז 30"
-        },
-        {
-          "name": "Low cable curl",
-          "setsReps": "3x12",
-          "intensity": "moderate",
-          "hasWeightInput": true,
-          "notes": "03.10: 10 × 12 × 3 + 12.5 × 10 · הבא: 12.5 × 3"
+          "notes": "מרפק על ציר המכונה · 10.10: 23 × 10 × 3 · הבא: 23, לכוון ל-12"
         },
         {
           "name": "Hammer curls",
           "setsReps": "3x10-12",
           "intensity": "moderate",
           "hasWeightInput": true,
-          "notes": "03.10: 5 × 12 × 3 · הבא: 6-7 ק\"ג"
+          "notes": "10.10: 6 × 10 × 3 · הבא: 6, לכוון ל-12"
+        },
+        {
+          "name": "Triceps press machine",
+          "setsReps": "3x10-12",
+          "intensity": "moderate",
+          "hasWeightInput": true,
+          "notes": "10.10: 27×12, 32×10, 32×10 · הבא: 32 × 3, ב-12 לעלות"
+        },
+        {
+          "name": "Wrist curl",
+          "setsReps": "3x12-15",
+          "intensity": "light",
+          "hasWeightInput": true,
+          "notes": "10.10: 5 עד כשל · לספור חזרות! מעל 20 לעלות ל-7"
+        },
+        {
+          "name": "Reverse wrist curl",
+          "setsReps": "3x12-15",
+          "intensity": "light",
+          "hasWeightInput": true,
+          "notes": "כף היד למטה · 10.10: 5 עד כשל · לספור חזרות"
+        },
+        {
+          "name": "Standing lateral raise",
+          "setsReps": "3x12-15",
+          "intensity": "light",
+          "hasWeightInput": true,
+          "notes": "10.10: דילגת · 5-6 ק\"ג, בלי להניף"
         }
       ]
     }
